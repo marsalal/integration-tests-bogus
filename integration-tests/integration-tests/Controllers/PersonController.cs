@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace integration_tests.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class PersonController : Controller
     {
         private  SampleContext _context {get;set;}
@@ -28,7 +30,7 @@ namespace integration_tests.Controllers
 
         [Route("{id}")]
         [HttpGet]
-        public IActionResult GetById(string id)
+        public IActionResult GetById([FromQuery]string id)
         {
             if (string.IsNullOrEmpty(id)) return BadRequest();
 
