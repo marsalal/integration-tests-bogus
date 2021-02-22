@@ -30,11 +30,14 @@ namespace integration_tests.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetById([FromQuery]string id)
+        [ProducesResponseType(typeof(Person), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetById(string id)
         {
             if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var result = _context.Persons.FirstOrDefault(x => x.Id == id);
+            if (result == null) { return NotFound(); }
             return Ok(result);
         }
 
