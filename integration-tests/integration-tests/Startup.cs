@@ -34,6 +34,7 @@ namespace integration_tests
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "integration_tests", Version = "v1" });
             });
+
             services.AddDbContext<SampleContext>(options => {
                 options.UseNpgsql(Configuration.GetConnectionString("defaultConnection"));
             });

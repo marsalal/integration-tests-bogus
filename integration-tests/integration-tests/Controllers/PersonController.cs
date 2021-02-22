@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Mime;
 using integration_tests.Data;
 using integration_tests.Data.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -28,20 +28,22 @@ namespace integration_tests.Controllers
             return Ok(result);
         }
 
-        [Route("{id}")]
         [HttpGet]
+        [Route("{id}")]
         public IActionResult GetById([FromQuery]string id)
         {
-            if (string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var result = _context.Persons.FirstOrDefault(x => x.Id == id);
             return Ok(result);
         }
 
         [HttpPost]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public IActionResult AddPerson([FromBody] Person person)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -49,13 +51,22 @@ namespace integration_tests.Controllers
             _context.Persons.Add(person);
             _context.SaveChanges();
 
-            return Ok();
+            return CreatedAtAction(nameof(GetById), new { id = person.Id }, person);
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeletePerson(string id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult DeletePerson([FromQuery]string id)
         {
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
+
+            var personToDelete = _context.Persons.FirstOrDefault(x => x.Id == id);
+            if(personToDelete == null) { return NotFound(); }
+            _context.Persons.Remove(personToDelete);
+            _context.SaveChanges();
+
             return Ok();
         }
     }

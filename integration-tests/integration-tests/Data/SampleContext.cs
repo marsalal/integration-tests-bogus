@@ -8,7 +8,6 @@ namespace integration_tests.Data
     {
 
         public DbSet<Person> Persons { get; set; }
-
         public SampleContext(DbContextOptions<SampleContext> dbContextOptions) : base(dbContextOptions) 
         {
         }

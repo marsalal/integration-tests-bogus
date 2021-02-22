@@ -1,10 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace integration_tests.Data.Models
 {
     public class Person
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        internal Guid Index { get; set; }
+
         [Required]
         public string Name { get; set; }
         [Required]
